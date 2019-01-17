@@ -1675,7 +1675,7 @@
   "icon": null, 
   "is_standard": "Yes", 
   "javascript": null, 
-  "json": "{\"fields\": [[\"name\", \"Item Price\"], [\"price_list\", \"Item Price\"], [\"currency\", \"Item Price\"], [\"item_code\", \"Item Price\"], [\"brand\", \"Item Price\"], [\"price_list_rate\", \"Item Price\"], [\"docstatus\", \"Item Price\"]], \"order_by\": \"`tabItem Price`.`modified` asc\", \"add_total_row\": 0, \"filters\": []}", 
+  "json": "{\"fields\": [[\"name\", \"Item Price\"], [\"price_list\", \"Item Price\"], [\"currency\", \"Item Price\"], [\"item_code\", \"Item Price\"], [\"brand\", \"Item Price\"], [\"price_list_rate\", \"Item Price\"], [\"docstatus\", \"Item Price\"]], \"order_by\": \"`tabItem Price`.`modified` asc\", \"filters\": [], \"add_total_row\": 0}", 
   "letter_head": null, 
   "modified": "2018-05-03 12:48:39.802088", 
   "module": "Stock", 
