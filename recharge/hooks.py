@@ -11,7 +11,7 @@ app_color = "grey"
 app_email = "info@aakvatech.com"
 app_license = "MIT"
 
-fixtures = ["Custom Field", "Custom Script", "Property Setter", "Print Format", "Report", "Letter Head"]
+fixtures = ["Custom Field", "Custom Script", "Property Setter", "Print Format", "Report"]
 
 # Includes in <head>
 # ------------------
