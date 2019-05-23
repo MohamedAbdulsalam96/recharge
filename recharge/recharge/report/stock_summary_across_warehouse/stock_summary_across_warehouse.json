@@ -1,0 +1,33 @@
+{
+ "add_total_row": 1, 
+ "creation": "2019-05-04 15:28:18.793229", 
+ "disable_prepared_report": 0, 
+ "disabled": 0, 
+ "docstatus": 0, 
+ "doctype": "Report", 
+ "idx": 0, 
+ "is_standard": "Yes", 
+ "modified": "2019-05-04 19:05:55.731545", 
+ "modified_by": "Administrator", 
+ "module": "Recharge", 
+ "name": "Stock Summary across Warehouse", 
+ "owner": "Administrator", 
+ "prepared_report": 1, 
+ "ref_doctype": "Stock Ledger Entry", 
+ "report_name": "Stock Summary across Warehouse", 
+ "report_type": "Script Report", 
+ "roles": [
+  {
+   "role": "Stock User"
+  }, 
+  {
+   "role": "Manufacturing User"
+  }, 
+  {
+   "role": "Manufacturing Manager"
+  }, 
+  {
+   "role": "Stock Manager"
+  }
+ ]
+}
