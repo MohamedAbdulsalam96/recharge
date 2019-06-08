@@ -11,7 +11,10 @@ app_color = "grey"
 app_email = "info@aakvatech.com"
 app_license = "MIT"
 
-fixtures = ["Custom Field", "Custom Script", "Property Setter", {"doctype":"Print Format", "filters": [{"module":"Recharge"}]}, {"doctype":"Report", "filters": [{"module":"Recharge"}]}]
+fixtures = [
+    {"doctype":"Print Format", "filters": [{"module":"Recharge"}]},
+    {"doctype":"Report", "filters": [{"module":"Recharge"}]}
+]
 
 # Includes in <head>
 # ------------------
@@ -29,7 +32,14 @@ fixtures = ["Custom Field", "Custom Script", "Property Setter", {"doctype":"Prin
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
-# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
+# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_list_js = {
+    "Purchase Invoice" : "recharge/purchase_invoice.js",
+    "Purchase Receipt" : "recharge/purchase_invoice.js",
+    "Stock Entry" : "recharge/stock_entry.js",
+    "Sales Invoice" : "recharge/sales_invoice.js",
+    "Purchase Invoice" : "recharge/purchase_invoice.js",
+}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
