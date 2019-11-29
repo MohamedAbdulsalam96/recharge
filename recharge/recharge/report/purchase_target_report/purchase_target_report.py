@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 import frappe
 from datetime import *
-
+import calendar
 def execute(filters=None):
 	columns, data = [], []
 	add_columns(columns,"Date", "date")
@@ -16,7 +16,11 @@ def execute(filters=None):
 		month = warehouse_target['month']
 		year = warehouse_target['year']
 		total_target_amount = warehouse_target['total_target_amount']
-		for day in range(1,number_of_working_days+1):
+		month_value = filters.get("warehouse_target").split()[0]
+		month_range = "range" + str(calendar.monthrange(2019, 10))
+		_from = int(str(calendar.monthrange(2019, 10))[1])
+		_to = int(str(calendar.monthrange(2019, 10))[4] + str(calendar.monthrange(2019, 10))[5])
+		for day in range(_from,_to):
 			date_string = str(month) + " " + str(day) + " " + str(year)
 			date = datetime.strptime(date_string, '%B %d %Y')
 
@@ -77,14 +81,18 @@ def check_date_in_holiday(date,defaults):
 def total_computations(columns,warehouses,data, warehouse_target):
 	warehouse_totals = {}
 	warehouse_totals_difference = {}
+	commissions = {}
+
 	warehouse_totals["date"] = "Totals"
 	for i in warehouses:
 		if check_if_column_labels(columns,i.warehouse_name):
 			sum_per_warehouse = sum(d[i.warehouse_name.lower().replace(" ","").replace("-","_")] if i.warehouse_name.lower().replace(" ","").replace("-","_") in d else 0 for d in data if d)
 			get_target_amount_value = get_target_amount(warehouse_target["warehouse_target_details"],i.warehouse_name.lower().replace(" ","").replace("-","_"))
 			difference = sum_per_warehouse - get_target_amount_value if get_target_amount_value > 0 else 0
+			# commission_value = commission_check(sum_per_warehouse,get_target_amount_value)
 			warehouse_totals[i.warehouse_name.lower().replace(" ","").replace("-","_")] = sum_per_warehouse
 			warehouse_totals_difference[i.warehouse_name.lower().replace(" ","").replace("-","_")] = difference
+
 	data.append({})
 	data.append(warehouse_totals)
 	data.append(warehouse_totals_difference)
@@ -99,3 +107,9 @@ def get_target_amount(warehouse_target_details, warehouse_name):
 		if change_name == warehouse_name and data["target_amount"] > 0:
 			return data["target_amount"]
 	return 0
+#COMPUTE COMMISION
+# def commission_check(sum_per_warehouse,target_amount_value):
+# 	year = datetime.now().year
+# 	get_monthly_commisions = frappe.get_list("Monthly", filters={"parent": "BONUSES" + str(year)}, fields=["*"])
+#
+# 	percentage = sum_per_warehouse / target_amount_value

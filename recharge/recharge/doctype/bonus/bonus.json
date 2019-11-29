@@ -1,5 +1,5 @@
 {
- "autoname": "format:BONUSES 2019",
+ "autoname": "format:BONUSES {YYYY}",
  "creation": "2019-11-29 11:37:04.623279",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -28,7 +28,7 @@
    "options": "Quarterly Bonus"
   }
  ],
- "modified": "2019-11-29 12:21:10.295151",
+ "modified": "2019-11-29 12:34:22.768173",
  "modified_by": "Administrator",
  "module": "Recharge",
  "name": "Bonus",
