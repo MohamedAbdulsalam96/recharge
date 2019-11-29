@@ -1,0 +1,36 @@
+{
+ "creation": "2019-11-28 09:50:06.159935",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "warehouse",
+  "target_amount"
+ ],
+ "fields": [
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "target_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Target Amount"
+  }
+ ],
+ "istable": 1,
+ "modified": "2019-11-28 09:50:41.004106",
+ "modified_by": "Administrator",
+ "module": "Recharge",
+ "name": "Warehouse Target Details",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

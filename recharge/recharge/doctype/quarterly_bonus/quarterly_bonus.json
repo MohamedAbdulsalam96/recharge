@@ -1,0 +1,35 @@
+{
+ "creation": "2019-11-29 11:40:26.603868",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "q_percentage_target",
+  "q_percentage_bonus"
+ ],
+ "fields": [
+  {
+   "fieldname": "q_percentage_target",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Monthly Percentage Target"
+  },
+  {
+   "fieldname": "q_percentage_bonus",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "Percentage Bonus"
+  }
+ ],
+ "istable": 1,
+ "modified": "2019-11-29 12:24:19.179394",
+ "modified_by": "Administrator",
+ "module": "Recharge",
+ "name": "Quarterly Bonus",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

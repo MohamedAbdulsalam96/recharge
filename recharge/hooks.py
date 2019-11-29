@@ -13,7 +13,18 @@ app_license = "MIT"
 
 fixtures = [
     {"doctype":"Print Format", "filters": [{"module":"Recharge"}]},
-    {"doctype":"Report", "filters": [{"module":"Recharge"}]}
+    {"doctype":"Report", "filters": [{"module":"Recharge"}]},
+    {"doctype":"Custom Field",
+     "filters": [
+            [
+                "name",
+                "in",
+                [
+                    "Global Defaults-default_holidays",
+                ],
+            ],
+        ]
+     }
 ]
 
 # Includes in <head>
