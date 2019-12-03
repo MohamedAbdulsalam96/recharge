@@ -6,10 +6,13 @@
  "engine": "InnoDB",
  "field_order": [
   "month",
+  "warehouse_group",
   "column_break_2",
   "year",
+  "brand",
   "column_break_4",
   "number_of_working_days",
+  "item_group",
   "section_break_6",
   "warehouse_target_details",
   "total_target_amount"
@@ -61,9 +64,27 @@
    "fieldtype": "Currency",
    "label": "Total Target Amount",
    "read_only": 1
+  },
+  {
+   "fieldname": "warehouse_group",
+   "fieldtype": "Link",
+   "label": "Warehouse Group",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "brand",
+   "fieldtype": "Link",
+   "label": "Brand",
+   "options": "Brand"
+  },
+  {
+   "fieldname": "item_group",
+   "fieldtype": "Link",
+   "label": "Item Group",
+   "options": "Item Group"
   }
  ],
- "modified": "2019-11-29 09:19:58.026133",
+ "modified": "2019-12-02 09:06:26.598048",
  "modified_by": "Administrator",
  "module": "Recharge",
  "name": "Warehouse Target",
