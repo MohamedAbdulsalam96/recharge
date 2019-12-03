@@ -26,7 +26,7 @@ def execute(filters=None):
 			total_purchase = 0
 			purchases = {}
 			purchases["date"] = day
-			if not check_date_in_holiday(date.date(),defaults) and total_target_amount > 0:
+			if total_target_amount > 0:
 				for i in warehouses:
 					total = get_total_purchases(i.name,date.date(),warehouse_target)
 					if total > 0 and not check_if_column_labels(columns,i.warehouse_name):
