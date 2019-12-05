@@ -53,8 +53,11 @@ def get_total_purchases(warehouse, date, warehouse_target):
 	item_group = warehouse_target['item_group']
 	total_that_will_be_returned = 0
 	pi = frappe.db.sql(
-		""" SELECT name, total FROM `tabPurchase Invoice` WHERE set_warehouse=%s and posting_date=%s""",
-		(warehouse, date), as_dict=True)
+		""" SELECT name, total FROM `tabPurchase Invoice` WHERE set_warehouse=%s and posting_date=%s and status != %s""",
+		(warehouse, date, "Cancelled"), as_dict=True)
+	print(warehouse)
+	print("PURCHASE INVOICE")
+	print(pi)
 	for i in pi:
 		valid_pi = check_valid_pi(i.name,brand,item_group)
 		if valid_pi:
@@ -73,7 +76,7 @@ def add_columns(columns,label,fieldname):
 		"label": label,
 		"width": 120,
 		"fieldname": fieldname,
-		"fieldtype": "Data"})
+		"fieldtype": "Currency" if fieldname != "date" else "Data"})
 
 def check_if_column_labels(columns,label):
 	for i in columns:
