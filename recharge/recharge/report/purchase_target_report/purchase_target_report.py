@@ -4,21 +4,23 @@
 from __future__ import unicode_literals
 import frappe
 import pandas as pd
-from datetime import *
-import calendar
 from time import strptime
 def execute(filters=None):
 	columns, data = [], []
 	warehouse_target = frappe.get_doc("Warehouse Target", filters.get("warehouse_target")).__dict__
 	brand = warehouse_target['brand']
 	item_group = warehouse_target['item_group']
+	supplier = warehouse_target['supplier']
 	total_target_amount = warehouse_target['total_target_amount']
 
 	month_int = int(strptime(filters.get("warehouse_target").split()[0], '%B').tm_mon)
-	columns.append({"label": "Date","width": 120,"fieldname": "date","fieldtype": "Data"})
+	date_field = {"label": "Date","width": 120,"fieldname": "date","fieldtype": "Data"}
 
-	warehouse_targets = get_purchase_invoice(brand,item_group,month_int)  # coming from frappe.db.sql in get_stock_ledger_entries()
+	columns.append(date_field)
+
+	warehouse_targets = get_purchase_invoice(brand,item_group,month_int,supplier)  # coming from frappe.db.sql in get_stock_ledger_entries()
 	colnames = [key for key in warehouse_targets[0].keys()]  # create list of columns used in creating dataframe
+
 	df = pd.DataFrame.from_records(warehouse_targets,
 								   columns=colnames)  # this is key to get the data from frappe.db.sql loaded correctly.
 
@@ -35,26 +37,20 @@ def execute(filters=None):
 
 
 	data = pvt.reset_index().values.tolist()  # reset the index and create a list for use in report.
-	print("DATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa")
 	totals_array = data[len(data) - 1]
-	print(data[len(data) - 1])
-	print(data)
-	print("DATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa")
 	for idx,i in enumerate(data):
-		print(idx)
 		if idx != len(data) - 1:
 			i.append( total_target_amount - i[len(i) - 1])
 
 	for idx, ii in enumerate(data):
 		if idx != len(data) - 1:
-			ii.append( round(ii[len(i) - 2] / total_target_amount,2))
+			ii.append( round(ii[len(ii) - 2] / total_target_amount,2))
 
 	for idx, iii in enumerate(data):
 		if idx != len(data) - 1:
-			iii.append( round(iii[len(i) - 2] / total_target_amount,2))
+			iii.append( round(iii[len(iii) - 2] / total_target_amount,2))
 
 	columns += pvt.columns.values.tolist()# create the list of dynamic columns added to the previously defined static columns
-
 
 	totals_commision = get_totals(filters,columns,totals_array)
 	data.append(totals_commision[6])
@@ -67,12 +63,19 @@ def execute(filters=None):
 	data.append(totals_commision[3])
 	data.append(totals_commision[4])
 	data.append(totals_commision[5])
-	columns.append("Target Balance")
+
+	columns = []
+	columns.append(date_field)
+	for value in pvt.columns.values.tolist():
+		columns.append({"label": value,"width": 150,"fieldname": value,"fieldtype": "Currency"})
+	columns.append({"label": "Target Balance","width": 150,"fieldname": "target_balance","fieldtype": "Currency"})
 	columns.append("% Complete")
 	columns.append("% Complete")
+
+	print(columns)
 	return columns, data
 
-def get_purchase_invoice(brand,item_group,month_int):
+def get_purchase_invoice(brand,item_group,month_int,supplier):
 
 
 	warehouse_targets = frappe.db.sql(
@@ -87,8 +90,8 @@ def get_purchase_invoice(brand,item_group,month_int):
 			and MONTH(posting_date) = %s
 			and YEAR(posting_date) = %s 
 			and `tabPurchase Invoice Item`.idx = 1 AND EXISTS (SELECT * FROM `tabWarehouse Target Details` 
-			WHERE `tabWarehouse Target Details`.warehouse = PI2.set_warehouse) ) as PI 
-			GROUP BY posting_date, set_warehouse""",(brand, item_group,"Cancelled", month_int, "2019"), as_dict=True)
+			WHERE `tabWarehouse Target Details`.warehouse = PI2.set_warehouse) AND supplier=%s) as PI 
+			GROUP BY posting_date, set_warehouse""",(brand, item_group,"Cancelled", month_int, "2019",supplier), as_dict=True)
 
 
 	return warehouse_targets
@@ -99,6 +102,7 @@ def get_totals(filters,columns,totals_array):
 	item_group = warehouse_target['item_group']
 	total_target_amount = warehouse_target['total_target_amount']
 	year = warehouse_target['year']
+	supplier = warehouse_target['supplier']
 	total = 0
 	month_int = int(strptime(filters.get("warehouse_target").split()[0], '%B').tm_mon)
 	warehouse_final_array = [""]
@@ -113,8 +117,8 @@ def get_totals(filters,columns,totals_array):
             and MONTH(posting_date) = %s
             and YEAR(posting_date) = %s
             and `tabPurchase Invoice Item`.idx = 1 AND EXISTS (SELECT * FROM `tabWarehouse Target Details`
-            WHERE `tabWarehouse Target Details`.warehouse = PI2.set_warehouse) 
-            GROUP BY set_warehouse ASC""", (brand, item_group, "Cancelled", month_int, "2019"))
+            WHERE `tabWarehouse Target Details`.warehouse = PI2.set_warehouse AND supplier=%s) 
+            GROUP BY set_warehouse ASC""", (brand, item_group, "Cancelled", month_int, "2019",supplier))
 	for i in warehouse_totals:
 		target_amount = frappe.get_list("Warehouse Target Details", filters={"parent": filters.get("warehouse_target"), "warehouse": i[1]}, fields=["target_amount"])
 
