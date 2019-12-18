@@ -127,13 +127,14 @@ def get_totals(filters,columns,totals_array):
 
 	warehouse_final_array.append(round(total,2))
 	warehouse_final_array.append(round(total_target_amount,2))
-	get_percentage_data = get_percentage(warehouse_totals,year,filters,columns,totals_array)
+	get_percentage_data = get_percentage(warehouse_totals,filters,columns,totals_array)
 
 	return warehouse_final_array,get_percentage_data[0],get_percentage_data[1],get_percentage_data[2],get_percentage_data[3],get_percentage_data[4],get_percentage_data[5],get_percentage_data[6]
 
 
-def get_percentage(warehouse_totals,year,filters,columns,totals_array):
+def get_percentage(warehouse_totals,filters,columns,totals_array):
 	nowd = frappe.get_value("Warehouse Target", filters.get("warehouse_target"), "number_of_working_days")
+	bonus = frappe.get_value("Warehouse Target", filters.get("warehouse_target"), "bonus")
 	total_target_amount = frappe.get_value("Warehouse Target", filters.get("warehouse_target"), "total_target_amount")
 	percentage_bonus_return = [""]
 	percentage_bonus_return_total = 0
@@ -152,7 +153,7 @@ def get_percentage(warehouse_totals,year,filters,columns,totals_array):
 	array_1 = ["", ""]
 	array_2 = ["", ""]
 
-	bonus_record = frappe.get_list("Monthly Bonus", filters={"parent": "BONUSES " + str(year)}, fields=["percentage_target", "percentage_bonus"], order_by="percentage_bonus")
+	bonus_record = frappe.get_list("Monthly Bonus", filters={"parent": bonus}, fields=["percentage_target", "percentage_bonus"], order_by="percentage_bonus")
 
 	for i in range(1,len(columns) - 1):
 		sum = get_sum(columns[i],warehouse_totals)

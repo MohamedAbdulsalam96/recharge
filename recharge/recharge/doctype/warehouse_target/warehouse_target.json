@@ -11,6 +11,7 @@
   "column_break_2",
   "year",
   "brand",
+  "bonus",
   "column_break_4",
   "number_of_working_days",
   "item_group",
@@ -89,9 +90,15 @@
    "fieldtype": "Link",
    "label": "Supplier",
    "options": "Supplier"
+  },
+  {
+   "fieldname": "bonus",
+   "fieldtype": "Link",
+   "label": "Bonus",
+   "options": "Bonus"
   }
  ],
- "modified": "2019-12-12 11:16:23.000875",
+ "modified": "2019-12-17 11:50:16.919233",
  "modified_by": "Administrator",
  "module": "Recharge",
  "name": "Warehouse Target",

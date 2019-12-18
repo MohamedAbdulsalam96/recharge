@@ -4,6 +4,12 @@
 
 frappe.query_reports["Purchase Target Summary Report"] = {
 	"filters": [
-
+		{
+            "fieldname": "target",
+            "label": __("Warehouse Target"),
+            "fieldtype": "Link",
+            "options": "Warehouse Target",
+            "reqd": 1
+        }
 	]
 };
