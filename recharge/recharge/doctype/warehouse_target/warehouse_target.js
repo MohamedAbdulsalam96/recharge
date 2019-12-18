@@ -25,6 +25,16 @@ cur_frm.cscript.target_amount = function (frm) {
 	cur_frm.refresh_field("total_target_amount")
 };
 
+cur_frm.cscript.refresh = function (frm) {
+	cur_frm.add_custom_button(__("Purchase Target"), function() {
+		frappe.set_route("query-report", "Purchase Target Report", {"warehouse_target": cur_frm.doc.name});
+	});
+	cur_frm.add_custom_button(__("Purchase Target Summary"), function() {
+		frappe.set_route("query-report", "Purchase Target Summary Report", {"target": cur_frm.doc.name});
+	});
+
+};
+
 cur_frm.fields_dict["warehouse_group"].get_query = function() {
 	return {
 		filters: {
