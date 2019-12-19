@@ -76,8 +76,6 @@ def execute(filters=None):
 	columns.append("% Complete")
 	columns.append("% Complete")
 	currency = frappe.db.get_single_value("Global Defaults", "default_currency")
-	print("CURRRENCY")
-	print(currency)
 	for idx,arrays in enumerate(data):
 		for idx2,amount in enumerate(arrays):
 			try:
@@ -98,7 +96,6 @@ def execute(filters=None):
 	return columns, data
 
 def get_purchase_invoice(brand,item_group,month_int,supplier):
-
 
 	warehouse_targets = frappe.db.sql(
 		""" SELECT PI.posting_date, SUM(PI.total) as total, PI.set_warehouse FROM 

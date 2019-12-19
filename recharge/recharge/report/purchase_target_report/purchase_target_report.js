@@ -19,5 +19,6 @@ frappe.query_reports["Purchase Target Report"] = {
 	    }
 	    return value;
 	}
+
 };
 
