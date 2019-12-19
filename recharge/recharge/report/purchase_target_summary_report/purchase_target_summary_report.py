@@ -6,6 +6,7 @@ import frappe
 import pandas as pd
 from time import strptime
 
+from frappe.utils import fmt_money
 
 def execute(filters=None):
 	columns = [{"label": "","width": 120,"fieldname": "dummy","fieldtype": "Data"}]
@@ -14,24 +15,26 @@ def execute(filters=None):
 		warehouse_target = get_targets(filters.get("target"))
 
 		for i in warehouse_target:
-			columns.append({"label": i.set_warehouse,"width": 120,"fieldname": i.set_warehouse,"fieldtype": "Data"})
-		columns.append({"label": "Total", "width": 120, "fieldname": "total", "fieldtype": "Data"})
+			columns.append({"label": i.set_warehouse,"width": 150,"fieldname": i.set_warehouse,"fieldtype": "Data"})
+		columns.append({"label": "Total", "width": 150, "fieldname": "total", "fieldtype": "Data"})
 		targets = {"dummy": "TARGET"}
 		achieves = {"dummy": "ACHIEVED"}
 		percentages = {"dummy": "%"}
 		targets_total = 0
 		achieves_total = 0
+		currency = frappe.db.get_single_value("Global Defaults", "default_currency")
+
 		for ii in warehouse_target:
-			targets[ii.set_warehouse] = ii.target_amount
+			targets[ii.set_warehouse] = fmt_money(ii.target_amount,2,currency)
 			targets_total += ii.target_amount
-			achieves[ii.set_warehouse] = ii.total
+			achieves[ii.set_warehouse] = fmt_money(ii.total,2,currency)
 			achieves_total += ii.total
-			percentages[ii.set_warehouse] = round((ii.total / ii.target_amount) * 100,2)
+			percentages[ii.set_warehouse] = str(round((ii.total / ii.target_amount) * 100,2)) + " %"
 
 
-		targets["total"] = targets_total
-		achieves["total"] = achieves_total
-		percentages["total"] = round((achieves_total / targets_total) * 100,2)
+		targets["total"] = fmt_money(targets_total,2,currency)
+		achieves["total"] = fmt_money(achieves_total,2,currency)
+		percentages["total"] = str(round((achieves_total / targets_total) * 100,2)) + " %"
 		data.append(targets)
 		data.append(achieves)
 		data.append(percentages)

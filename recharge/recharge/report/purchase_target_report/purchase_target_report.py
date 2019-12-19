@@ -5,6 +5,8 @@ from __future__ import unicode_literals
 import frappe
 import pandas as pd
 from time import strptime
+from datetime import *
+from frappe.utils import fmt_money
 def execute(filters=None):
 	columns, data = [], []
 	warehouse_target = frappe.get_doc("Warehouse Target", filters.get("warehouse_target")).__dict__
@@ -14,7 +16,7 @@ def execute(filters=None):
 	total_target_amount = warehouse_target['total_target_amount']
 
 	month_int = int(strptime(filters.get("warehouse_target").split()[0], '%B').tm_mon)
-	date_field = {"label": "Date","width": 120,"fieldname": "date","fieldtype": "Data"}
+	date_field = {"label": "Date","width": 150,"fieldname": "date","fieldtype": "Data"}
 
 	columns.append(date_field)
 
@@ -53,6 +55,7 @@ def execute(filters=None):
 	columns += pvt.columns.values.tolist()# create the list of dynamic columns added to the previously defined static columns
 
 	totals_commision = get_totals(filters,columns,totals_array)
+	data.append(totals_commision[4])
 	data.append(totals_commision[6])
 	data.append(totals_commision[0])
 	data.append(totals_commision[7])
@@ -61,18 +64,37 @@ def execute(filters=None):
 	data.append([])
 
 	data.append(totals_commision[3])
-	data.append(totals_commision[4])
 	data.append(totals_commision[5])
 
 	columns = []
 	columns.append(date_field)
 	for value in pvt.columns.values.tolist():
-		columns.append({"label": value,"width": 150,"fieldname": value,"fieldtype": "Currency"})
-	columns.append({"label": "Target Balance","width": 150,"fieldname": "target_balance","fieldtype": "Currency"})
+		columns.append({"label": value,"width": 150,"fieldname": value,"fieldtype": "Data"})
+	columns.append({"label": "Target Balance","width": 150,"fieldname": "target_balance","fieldtype": "Data"})
+	complete_column_1 = len(columns)
+	complete_column_2 = len(columns) + 1
 	columns.append("% Complete")
 	columns.append("% Complete")
+	currency = frappe.db.get_single_value("Global Defaults", "default_currency")
+	print("CURRRENCY")
+	print(currency)
+	for idx,arrays in enumerate(data):
+		for idx2,amount in enumerate(arrays):
+			try:
+				data[idx][idx2] = fmt_money(amount, 2, currency) if (amount >= 0 or amount < 0) \
+																 and data[idx][0] != "%ge Target Achieved" \
+																 and idx2 != complete_column_1 \
+																 and idx2 != complete_column_2 \
+					else str(amount) + " %" if ((amount >= 0 or amount < 0) and data[idx][0] == "%ge Target Achieved") or (idx2 == complete_column_1 or idx2 == complete_column_2 ) else \
+				data[idx][idx2]
+			except:
+				try:
+					print(data[idx][idx2])
+					data[idx][idx2] = datetime.strptime(str(data[idx][idx2]), "%Y-%m-%d").date()
+					data[idx][idx2] = data[idx][idx2].strftime("%d") + "-" + data[idx][idx2].strftime("%m") + "-" + data[idx][idx2].strftime("%Y")
+				except:
+					print(frappe.get_traceback())
 
-	print(columns)
 	return columns, data
 
 def get_purchase_invoice(brand,item_group,month_int,supplier):
@@ -101,11 +123,10 @@ def get_totals(filters,columns,totals_array):
 	brand = warehouse_target['brand']
 	item_group = warehouse_target['item_group']
 	total_target_amount = warehouse_target['total_target_amount']
-	year = warehouse_target['year']
 	supplier = warehouse_target['supplier']
 	total = 0
 	month_int = int(strptime(filters.get("warehouse_target").split()[0], '%B').tm_mon)
-	warehouse_final_array = [""]
+	warehouse_final_array = ["Difference"]
 	warehouse_totals = frappe.db.sql(
 		""" SELECT SUM(total) as total, set_warehouse  FROM `tabPurchase Invoice` AS PI2
             INNER JOIN `tabPurchase Invoice Item` ON PI2.name = `tabPurchase Invoice Item`.parent
@@ -136,18 +157,18 @@ def get_percentage(warehouse_totals,filters,columns,totals_array):
 	nowd = frappe.get_value("Warehouse Target", filters.get("warehouse_target"), "number_of_working_days")
 	bonus = frappe.get_value("Warehouse Target", filters.get("warehouse_target"), "bonus")
 	total_target_amount = frappe.get_value("Warehouse Target", filters.get("warehouse_target"), "total_target_amount")
-	percentage_bonus_return = [""]
+	percentage_bonus_return = ["Commision"]
 	percentage_bonus_return_total = 0
 
-	percentage_commision = [""]
+	percentage_commision = ["%ge Target Achieved"]
 	percentage_computation = 0
 
-	targe_divide_nowd_array = [""]
+	targe_divide_nowd_array = ["Target per day"]
 	targe_divide_nowd_array_total = 0
 
-	targe_times_nowd_array = [""]
+	targe_times_nowd_array = ["Purchase Target"]
 
-	minus_array = [""]
+	minus_array = ["Target to be Achieved"]
 	minus_array_total = 0
 
 	array_1 = ["", ""]
@@ -177,7 +198,7 @@ def get_percentage(warehouse_totals,filters,columns,totals_array):
 		targe_divide_nowd_array.append(float(targe_divide_nowd))
 		targe_divide_nowd_array_total += float(targe_divide_nowd)
 
-		targe_times_nowd_array.append(float(targe_times_nowd))
+		targe_times_nowd_array.append(float(round(targe_times_nowd)))
 
 		minus_array.append(float(difference))
 		minus_array_total += float(difference)
