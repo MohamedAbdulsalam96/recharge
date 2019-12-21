@@ -51,7 +51,6 @@ doctype_list_js = {
     "Purchase Receipt" : "recharge/purchase_invoice.js",
     "Stock Entry" : "recharge/stock_entry.js",
     "Sales Invoice" : "recharge/sales_invoice.js",
-    "Payment Entry" : "recharge/payment_entry.js",
 }
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
