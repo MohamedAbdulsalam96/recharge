@@ -11,5 +11,14 @@ frappe.query_reports["Purchase Target Report"] = {
             "options": "Warehouse Target",
             "reqd": 1
         }
-	]
+	],
+    "formatter": function(value, row, column, data, default_formatter) {
+	    value = default_formatter(value, row, column, data);
+	    if (value === "Total" || value === "Commision" || value === "%ge Target Achieved"){
+	        value = '<b style="font-weight:bold">'+value+'</b>';
+	    }
+	    return value;
+	}
+
 };
+
