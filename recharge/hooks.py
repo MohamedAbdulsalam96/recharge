@@ -14,6 +14,8 @@ app_license = "MIT"
 fixtures = [
     {"doctype":"Print Format", "filters": [{"module":"Recharge"}]},
     {"doctype":"Report", "filters": [{"module":"Recharge"}]},
+	{"doctype":"Custom Field", "filters": [["_user_tags", "like", ("%recharge%")]]},
+	{"doctype":"Property Setter", "filters": [["_user_tags", "like", ("%recharge%")]]},
     {"doctype":"Custom Field",
      "filters": [
             [
