@@ -87,7 +87,6 @@ def execute(filters=None):
 				data[idx][idx2]
 			except:
 				try:
-					print(data[idx][idx2])
 					data[idx][idx2] = datetime.strptime(str(data[idx][idx2]), "%Y-%m-%d").date()
 					data[idx][idx2] = data[idx][idx2].strftime("%d") + "-" + data[idx][idx2].strftime("%m") + "-" + data[idx][idx2].strftime("%Y")
 				except:
@@ -181,7 +180,7 @@ def get_percentage(warehouse_totals,filters,columns,totals_array):
 										fields=["target_amount"])
 		percentage = round((sum / target_amount[0].target_amount) * 100,2)
 		targe_divide_nowd = round((target_amount[0].target_amount / nowd),2)
-		targe_times_nowd = round((targe_divide_nowd * nowd),2)
+		targe_times_nowd = round((targe_divide_nowd * nowd))
 		difference = round(targe_times_nowd - sum,2)
 		for ii in bonus_record:
 			if percentage >= int(ii.percentage_target):
