@@ -79,18 +79,16 @@ def execute(filters=None):
 	for idx,arrays in enumerate(data):
 		for idx2,amount in enumerate(arrays):
 			try:
-				data[idx][idx2] = fmt_money(amount, 2, currency) if (amount >= 0 or amount < 0) \
-																 and data[idx][0] != "%ge Target Achieved" \
-																 and idx2 != complete_column_1 \
-																 and idx2 != complete_column_2 \
-					else str(amount) + " %" if ((amount >= 0 or amount < 0) and data[idx][0] == "%ge Target Achieved") or (idx2 == complete_column_1 or idx2 == complete_column_2 ) else \
-				data[idx][idx2]
+				if data[idx][0] and (amount >= 0 or amount < 0) and data[idx][0] != "%ge Target Achieved" and idx2 != complete_column_1 and idx2 != complete_column_2:
+					 data[idx][idx2] = fmt_money(float(amount), 2, currency)
+				elif ((amount >= 0 or amount < 0) and data[idx][0] == "%ge Target Achieved") or (idx2 == complete_column_1 or idx2 == complete_column_2 ):
+					data[idx][idx2] = str(float(amount)) + " %"
 			except:
 				try:
 					data[idx][idx2] = datetime.strptime(str(data[idx][idx2]), "%Y-%m-%d").date()
 					data[idx][idx2] = data[idx][idx2].strftime("%d") + "-" + data[idx][idx2].strftime("%m") + "-" + data[idx][idx2].strftime("%Y")
 				except:
-					print(frappe.get_traceback())
+					frappe.log_error(frappe.get_traceback())
 
 	return columns, data
 
