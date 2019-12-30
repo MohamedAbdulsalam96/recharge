@@ -69,7 +69,8 @@ def execute(filters=None):
 	columns = []
 	columns.append(date_field)
 	for value in pvt.columns.values.tolist():
-		columns.append({"label": value,"width": 150,"fieldname": value,"fieldtype": "Data"})
+		columns.append({"label": value,"width": 150,"fieldname": value.lower().split()[0].replace(" ",""),"fieldtype": "Data"})
+
 	columns.append({"label": "Target Balance","width": 150,"fieldname": "target_balance","fieldtype": "Data"})
 	complete_column_1 = len(columns)
 	complete_column_2 = len(columns) + 1
@@ -79,20 +80,17 @@ def execute(filters=None):
 	for idx,arrays in enumerate(data):
 		for idx2,amount in enumerate(arrays):
 			try:
-				data[idx][idx2] = fmt_money(amount, 2, currency) if (amount >= 0 or amount < 0) \
-																 and data[idx][0] != "%ge Target Achieved" \
-																 and idx2 != complete_column_1 \
-																 and idx2 != complete_column_2 \
-					else str(amount) + " %" if ((amount >= 0 or amount < 0) and data[idx][0] == "%ge Target Achieved") or (idx2 == complete_column_1 or idx2 == complete_column_2 ) else \
-				data[idx][idx2]
+				if data[idx][0] and (amount >= 0 or amount < 0) and data[idx][0] != "%ge Target Achieved" and idx2 != complete_column_1 and idx2 != complete_column_2:
+					 data[idx][idx2] = fmt_money(float(amount), 2, currency)
+				elif ((amount >= 0 or amount < 0) and data[idx][0] == "%ge Target Achieved") or (idx2 == complete_column_1 or idx2 == complete_column_2 ):
+					data[idx][idx2] = str(float(amount)) + " %"
 			except:
 				try:
-					print(data[idx][idx2])
 					data[idx][idx2] = datetime.strptime(str(data[idx][idx2]), "%Y-%m-%d").date()
 					data[idx][idx2] = data[idx][idx2].strftime("%d") + "-" + data[idx][idx2].strftime("%m") + "-" + data[idx][idx2].strftime("%Y")
 				except:
-					print(frappe.get_traceback())
-
+					frappe.log_error(frappe.get_traceback())
+	print(columns)
 	return columns, data
 
 def get_purchase_invoice(brand,item_group,month_int,supplier):
@@ -116,6 +114,7 @@ def get_purchase_invoice(brand,item_group,month_int,supplier):
 	return warehouse_targets
 
 def get_totals(filters,columns,totals_array):
+	currency = frappe.db.get_single_value("Global Defaults", "default_currency")
 	warehouse_target = frappe.get_doc("Warehouse Target", filters.get("warehouse_target")).__dict__
 	brand = warehouse_target['brand']
 	item_group = warehouse_target['item_group']
@@ -123,7 +122,7 @@ def get_totals(filters,columns,totals_array):
 	supplier = warehouse_target['supplier']
 	total = 0
 	month_int = int(strptime(filters.get("warehouse_target").split()[0], '%B').tm_mon)
-	warehouse_final_array = ["Difference"]
+	warehouse_final_array = {"date":"Difference"}
 	warehouse_totals = frappe.db.sql(
 		""" SELECT SUM(total) as total, set_warehouse  FROM `tabPurchase Invoice` AS PI2
             INNER JOIN `tabPurchase Invoice Item` ON PI2.name = `tabPurchase Invoice Item`.parent
@@ -136,15 +135,15 @@ def get_totals(filters,columns,totals_array):
             and YEAR(posting_date) = %s
             and `tabPurchase Invoice Item`.idx = 1 AND EXISTS (SELECT * FROM `tabWarehouse Target Details`
             WHERE `tabWarehouse Target Details`.warehouse = PI2.set_warehouse AND supplier=%s) 
-            GROUP BY set_warehouse ASC""", (brand, item_group, "Cancelled", month_int, "2019",supplier))
+            GROUP BY set_warehouse""", (brand, item_group, "Cancelled", month_int, "2019",supplier))
 	for i in warehouse_totals:
 		target_amount = frappe.get_list("Warehouse Target Details", filters={"parent": filters.get("warehouse_target"), "warehouse": i[1]}, fields=["target_amount"])
 
-		warehouse_final_array.append(i[0] - target_amount[0].target_amount)
+		warehouse_final_array[i[1].lower().split()[0].replace(" ","")] = fmt_money(float(i[0] - target_amount[0].target_amount), 2, currency)
 		total += i[0] - target_amount[0].target_amount
 
-	warehouse_final_array.append(round(total,2))
-	warehouse_final_array.append(round(total_target_amount,2))
+	warehouse_final_array["total"] = fmt_money(float(total), 2, currency)
+	warehouse_final_array["target_balance"] = fmt_money(float(total_target_amount), 2, currency)
 	get_percentage_data = get_percentage(warehouse_totals,filters,columns,totals_array)
 
 	return warehouse_final_array,get_percentage_data[0],get_percentage_data[1],get_percentage_data[2],get_percentage_data[3],get_percentage_data[4],get_percentage_data[5],get_percentage_data[6]
@@ -181,7 +180,7 @@ def get_percentage(warehouse_totals,filters,columns,totals_array):
 										fields=["target_amount"])
 		percentage = round((sum / target_amount[0].target_amount) * 100,2)
 		targe_divide_nowd = round((target_amount[0].target_amount / nowd),2)
-		targe_times_nowd = round((targe_divide_nowd * nowd),2)
+		targe_times_nowd = round((targe_divide_nowd * nowd))
 		difference = round(targe_times_nowd - sum,2)
 		for ii in bonus_record:
 			if percentage >= int(ii.percentage_target):
