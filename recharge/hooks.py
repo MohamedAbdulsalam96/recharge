@@ -12,21 +12,41 @@ app_email = "info@aakvatech.com"
 app_license = "MIT"
 
 fixtures = [
-    {"doctype":"Print Format", "filters": [{"module":"Recharge"}]},
-    {"doctype":"Report", "filters": [{"module":"Recharge"}]},
-	{"doctype":"Custom Field", "filters": [["_user_tags", "like", ("%recharge%")]]},
-	{"doctype":"Property Setter", "filters": [["_user_tags", "like", ("%recharge%")]]},
-    {"doctype":"Custom Field",
-     "filters": [
-            [
-                "name",
-                "in",
-                [
-                    "Global Defaults-default_holidays",
-                ],
-            ],
-        ]
-     }
+	{"doctype":"Property Setter", "filters": [["name", "in", (
+        "Sales Invoice-default_print_format",
+        "Sales Invoice Item-rate-columns",
+        "Sales Invoice Item-item_code-columns",
+        "Sales Invoice Item-warehouse-columns",
+        "Sales Invoice Item-qty-columns",
+        "Sales Invoice Item-target_warehouse-in_list_view",
+        "Sales Invoice-update_stock-default",
+        "Purchase Invoice-default_print_format",
+        "Purchase Invoice Item-warehouse-columns",
+        "Purchase Invoice Item-warehouse-in_list_view",
+        "Purchase Invoice-update_stock-default",
+        "Purchase Receipt Item-net_amount-columns",
+        "Purchase Receipt Item-batch_no-in_list_view",
+        "Purchase Receipt Item-serial_no-in_list_view",
+        "Purchase Receipt Item-warehouse-columns",
+        "Purchase Receipt Item-item_code-columns",
+        "Purchase Receipt Item-net_amount-in_list_view",
+        "Purchase Receipt Item-amount-in_list_view",
+        "Purchase Receipt Item-rate-columns",
+        "Purchase Receipt Item-qty-columns",
+        "Item-valuation_method-default"
+    )]]},
+    {"doctype":"Custom Field", "filters": [["name", "in", (
+        "Sales Invoice Item-start_series",
+        "Sales Invoice Item-end_series",
+        "Purchase Receipt Item-start_series",
+        "Purchase Receipt Item-end_series",
+        "Purchase Invoice Item-end_series",
+        "Purchase Invoice Item-start_series",
+        "Stock Entry Detail-end_series",
+        "Stock Entry Detail-start_series",
+        "Purchase Invoice-actual_supplier_invoice_no",
+        "Purchase Invoice-actual_supplier_invoice_date"
+    )]]},
 ]
 
 # Includes in <head>
